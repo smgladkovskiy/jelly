@@ -19,8 +19,8 @@ Jelly requires the following Kohana versions per Git branch:
 **Useful stuff**:
 
  * [Jelly driver for Kohana Auth](https://github.com/creatoro/jelly-auth)
- * [Report an issue or feature request](https://github.com/creatoro/kohana-jelly-for-Kohana-3.1/issues)
- * [Leave feedback in the forum](http://forum.kohanaframework.org/discussion/8069/jelly-for-kohana-3.1-auth-driver-included)
+ * [Report an issue or feature request](https://github.com/creatoro/jelly/issues)
+ * [Leave feedback in the forum](http://forum.kohanaframework.org/discussion/9833/jelly-for-kohana-3.2-auth-driver)
 
 **Get involved in Jelly's developement**
 
