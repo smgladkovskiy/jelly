@@ -18,7 +18,7 @@ An example behavior:
 
 	class Jelly_Behavior_Post extends Jelly_Behavior {
 
-		public function model_before_save($params)
+		public function model_before_save($params, $event_data)
 		{
 			// Do stuff
 		}
@@ -27,8 +27,34 @@ An example behavior:
 
 #### Events in behaviors
 
-In the example above the `model_before_save($params)` method is called just before the model is saved.
-The event methods receive parameters when triggered, which contents are different for each event.
+In the example above the `model_before_save($params, $event_data)` method is called just before the model is saved.
+The event methods receive parameters and event data when triggered, which contents are different for each event.
+
+#### Event data
+
+Every event receives event data, which can be useful for a number of things. You can set the return value of the event
+or decide if you want to execute further events in a certain situation.
+
+The returned value might alter the result of an action, check out the following for an example.
+
+	<?php defined('SYSPATH') or die('No direct access allowed.');
+
+	class Jelly_Behavior_Post extends Jelly_Behavior {
+
+		public function model_before_save($params, $event_data)
+		{
+			if ($param->loaded())
+			{
+				// Set the returned value of the event, in this case returning
+				// FALSE this will make Jelly skip the saving of the model
+				$event_data->return = FALSE;
+
+				// Stop the execution of further events
+				$event_data->stop = TRUE;
+			}
+		}
+
+	} // End Jelly_Behavior_Post
 
 #### Available default events
 

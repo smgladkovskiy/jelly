@@ -21,7 +21,7 @@ An example behavior with a custom event:
 
 	class Jelly_Behavior_Post extends Jelly_Behavior {
 
-		public function model_publish_post($params)
+		public function model_publish_post($params, $event_data)
 		{
 			// Do stuff
 		}
@@ -36,7 +36,7 @@ You can create events with totally custom names, an example would be:
 
 	class Jelly_Behavior_Post extends Jelly_Behavior {
 
-		public function my_custom_event($params)
+		public function my_custom_event($params, $event_data)
 		{
 			// Do stuff
 		}

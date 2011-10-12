@@ -8,20 +8,26 @@ The following methods can be used to do actions on specific events.
 
 [!!] These methods receive the **model object** and the **validation object** in their params.
 
-- `model_before_validate($params)`
-- `model_after_validate($params)`
+[!!] The events' return value has no effect on the workings of Jelly.
+
+- `model_before_validate($params, $event_data)`
+- `model_after_validate($params, $event_data)`
 
 #### Saving
 
 [!!] These methods receive the **model object** in their params.
 
-- `model_before_save($params)`
-- `model_after_save($params)`
+[!!] If `model_before_save()` event's return value is `FALSE`, then saving is skipped.
+
+- `model_before_save($params, $event_data)`
+- `model_after_save($params, $event_data)`
 
 #### Deleting
 
-- `model_before_delete($params)`
-- `model_after_delete($params)`
+[!!] If `model_before_delete()` event's return value isn't `NULL`, then deleting is skipped, but `model_after_delete()` is still run.
+
+- `model_before_delete($params, $event_data)`
+- `model_after_delete($params, $event_data)`
 
 ***
 
@@ -31,23 +37,31 @@ The following methods can be used to do actions on specific events.
 
 #### Selecting
 
-- `builder_before_select($params)`
-- `builder_after_select($params)`
+[!!] The events' return value has no effect on the workings of Jelly.
+
+- `builder_before_select($params, $event_data)`
+- `builder_after_select($params, $event_data)`
 
 #### Inserting
 
-- `builder_before_insert($params)`
-- `builder_after_insert($params)`
+[!!] The events' return value has no effect on the workings of Jelly.
+
+- `builder_before_insert($params, $event_data)`
+- `builder_after_insert($params, $event_data)`
 
 #### Updating
 
-- `builder_before_update($params)`
-- `builder_after_update($params)`
+[!!] The events' return value has no effect on the workings of Jelly.
+
+- `builder_before_update($params, $event_data)`
+- `builder_after_update($params, $event_data)`
 
 #### Deleting
 
-- `builder_before_delete($params)`
-- `builder_after_delete($params)`
+[!!] If `builder_before_delete()` event's return value isn't `NULL`, then deleting is skipped, but `builder_after_delete()` is still run.
+
+- `builder_before_delete($params, $event_data)`
+- `builder_after_delete($params, $event_data)`
 
 ***
 
@@ -55,5 +69,7 @@ The following methods can be used to do actions on specific events.
 
 [!!] These methods receive the **meta object** in their params.
 
-- `meta_before_finalize($params)`
-- `meta_after_finalize($params)`
+[!!] The events' return value has no effect on the workings of Jelly.
+
+- `meta_before_finalize($params, $event_data)`
+- `meta_after_finalize($params, $event_data)`
