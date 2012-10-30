@@ -337,7 +337,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 * @param  string|null  $type
 	 * @return string
 	 */
-	public function compile(Database $db, $type = NULL)
+	public function compile($db = NULL, $type = NULL)
 	{
 		$type === NULL AND $type = $this->_type;
 

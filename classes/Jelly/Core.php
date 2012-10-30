@@ -194,11 +194,11 @@ abstract class Jelly_Core {
 	{
 		if ($model instanceof Jelly_Model)
 		{
-			return strtolower(get_class($model));
+			return get_class($model);
 		}
 		else
 		{
-			return strtolower(Jelly::$_model_prefix.$model);
+			return Jelly::$_model_prefix.$model;
 		}
 	}
 
@@ -255,5 +255,4 @@ abstract class Jelly_Core {
 	{
 		return Jelly::$_behavior_prefix;
 	}
-
 } // End Jelly_Core
