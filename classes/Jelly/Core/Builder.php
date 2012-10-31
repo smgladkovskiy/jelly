@@ -296,7 +296,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 
 		// Find the count
 		$result = (int) $query
-		               ->select(array('COUNT("*")', 'total'))
+		               ->select(array(DB::expr('COUNT("*")'), 'total'))
 		               ->execute($db)
 		               ->get('total');
 
