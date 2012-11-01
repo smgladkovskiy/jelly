@@ -198,7 +198,7 @@ abstract class Jelly_Core {
 		}
 		else
 		{
-			return Jelly::$_model_prefix.$model;
+			return Jelly::get_class_name(Jelly::$_model_prefix.$model);
 		}
 	}
 
@@ -254,5 +254,15 @@ abstract class Jelly_Core {
 	public static function behavior_prefix()
 	{
 		return Jelly::$_behavior_prefix;
+	}
+
+	public static function get_class_name ($class_name)
+	{
+		$class_name = explode ('_', $class_name);
+		foreach ($class_name as &$name) {
+			$name = UTF8::ucfirst ($name);
+		}
+
+		return implode ('_', $class_name);
 	}
 } // End Jelly_Core
