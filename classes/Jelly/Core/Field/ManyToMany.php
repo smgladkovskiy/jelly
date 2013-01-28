@@ -62,7 +62,7 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 		// Default to the name of the column
 		if (empty($this->foreign))
 		{
-			$foreign_model = inflector::singular($column);
+			$foreign_model = Inflector::singular($column);
 			$this->foreign = $foreign_model.'.'.$foreign_model.':primary_key';
 		}
 		// Is it model.field?
