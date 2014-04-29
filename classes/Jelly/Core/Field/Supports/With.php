@@ -16,7 +16,7 @@ interface Jelly_Core_Field_Supports_With {
 	 * This method should add a join() and on() clause
 	 * to the builder to finish the query.
 	 *
-	 * For examples, check out belongsTo and hasOne's implementations.
+	 * For examples, check out Belongsto and Hasone's implementations.
 	 *
 	 * @param   Jelly_Builder  $builder
 	 * @return  void

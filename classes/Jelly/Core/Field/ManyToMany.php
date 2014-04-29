@@ -85,8 +85,8 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 				// Find the join table based on the two model names pluralized,
 				// sorted alphabetically and with an underscore separating them
 				$through = array(
-					inflector::plural($this->foreign['model']),
-					inflector::plural($model)
+					Inflector::plural($this->foreign['model']),
+					Inflector::plural($model)
 				);
 
 				sort($through);
@@ -96,8 +96,8 @@ abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_
 			$this->through = array(
 				'model' => $this->through,
 				'fields' => array(
-					inflector::singular($model).':foreign_key',
-					inflector::singular($this->foreign['model']).':foreign_key',
+					Inflector::singular($model).':foreign_key',
+					Inflector::singular($this->foreign['model']).':foreign_key',
 				)
 			);
 		}

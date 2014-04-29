@@ -296,9 +296,10 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 
 		// Find the count
 		$result = (int) $query
-		               ->select(array(DB::expr('COUNT("*")'), 'total'))
-		               ->execute($db)
-		               ->get('total');
+			->select(array('COUNT("*")', 'total'))
+			->execute($db)
+			->get('total')
+		;
 
 		// Trigger after_query callbacks
 		$meta AND $meta->events()->trigger('builder.after_select', $this);
@@ -339,6 +340,12 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 */
 	public function compile($db = NULL, $type = NULL)
 	{
+		if ( ! is_object($db))
+		{
+			// Get the database instance
+			$db = Database::instance($db);
+		}
+
 		$type === NULL AND $type = $this->_type;
 
 		// Select all of the columns for the model if we haven't already
@@ -403,7 +410,14 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 */
 	public function unique_key($value)
 	{
-		return $this->_meta->primary_key();
+		if(is_object($this->_meta))
+		{
+			return $this->_meta->primary_key();
+		}
+		else
+		{
+			throw new Kohana_Exception(__('There is no meta information on model `:model`', array(':model' => $this->_model)));
+		}
 	}
 
 	/**
@@ -500,7 +514,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 							}
 							elseif ($field->column instanceof Database_Expression)
 							{
-							    $add[] = array($field->column, $field->name);
+								$add[] = array($field->column, $field->name);
 							}
 						}
 
@@ -985,7 +999,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 		$column = $field;
 
 		// Alias the model
- 		list(, $alias, $model) = $this->_model_alias($model);
+		list(, $alias, $model) = $this->_model_alias($model);
 
 		// Expand meta-aliases
 		if (strpos($field, ':') !== FALSE)
@@ -1043,27 +1057,38 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 * @param   string  $model
 	 * @param   string  $alias
 	 * @param   array   $state
-	 * @return  array
+	 *
+	 * @return mixed
+	 * @throws Kohana_Exception
 	 */
 	protected function _expand_alias($model, $alias, $state)
 	{
-		switch ($alias)
+		$meta = Jelly::meta($model);
+
+		if(is_object($meta))
 		{
-			case ':primary_key':
-				$state['field'] = Jelly::meta($model)->primary_key();
-				break;
-			case ':name_key':
-				$state['field'] = Jelly::meta($model)->name_key();
-				break;
-			case ':foreign_key':
-				$state['field'] = Jelly::meta($model)->foreign_key();
-				break;
-			case ':unique_key':
-				$state['field'] = Jelly::query(Jelly::meta($model)->model())->unique_key($state['value']);
-				break;
-			default:
-				throw new Kohana_Exception('Unknown meta alias :alias', array(
+			switch ($alias)
+			{
+				case ':primary_key':
+					$state['field'] = Jelly::meta($model)->primary_key();
+					break;
+				case ':name_key':
+					$state['field'] = Jelly::meta($model)->name_key();
+					break;
+				case ':foreign_key':
+					$state['field'] = Jelly::meta($model)->foreign_key();
+					break;
+				case ':unique_key':
+					$state['field'] = Jelly::query(Jelly::meta($model)->model())->unique_key($state['value']);
+					break;
+				default:
+					throw new Kohana_Exception('Unknown meta alias :alias', array(
 					':alias' => $alias));
+			}
+		}
+		else
+		{
+			throw new Kohana_Exception(__('There is no meta information on model `:model`', array(':model' => $model)));
 		}
 
 		return $state;

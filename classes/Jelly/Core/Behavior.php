@@ -70,7 +70,7 @@ abstract class Jelly_Core_Behavior {
 	/**
 	 * Simple method for auto-discovering events on the behavior.
 	 * 
-	 * Only methods prefixed with either builder_ or model_
+	 * Only methods prefixed with either Builder_ or Model_
 	 * will be considered. 
 	 * 
 	 * @param   Jelly_Event  $event

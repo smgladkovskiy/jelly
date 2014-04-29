@@ -194,7 +194,13 @@ abstract class Jelly_Core_Meta {
 		// See if we have a special builder class to use
 		if (empty($this->_builder))
 		{
-			$builder = Jelly::model_prefix().'builder_'.$model;
+			$builder = Jelly::model_prefix().'Builder_'.$model;
+
+            // Set PSR-0 class name
+            $builder = strtolower($builder);
+            $builder = str_replace('_', ' ', $builder);
+            $builder = ucwords($builder);
+            $builder = str_replace(' ', '_', $builder);
 
 			if (class_exists($builder))
 			{

@@ -53,6 +53,9 @@ abstract class Jelly_Core {
 	{
 		$class = Jelly::class_name($model);
 
+		if( ! class_exists($class))
+			throw new Kohana_Exception(__('Jelly Model `:model` does not exist', array(':model' => $model)));
+
 		return new $class($key);
 	}
 
@@ -118,7 +121,7 @@ abstract class Jelly_Core {
 	 */
 	public static function field($type, $options = NULL)
 	{
-		$field = Jelly::$_field_prefix.$type;
+		$field = Jelly::get_class_name(Jelly::$_field_prefix.$type);
 
 		return new $field($options);
 	}
@@ -132,7 +135,7 @@ abstract class Jelly_Core {
 	 */
 	public static function behavior($type, $options = array())
 	{
-		$behavior = Jelly::$_behavior_prefix.$type;
+		$behavior = Jelly::get_class_name(Jelly::$_behavior_prefix.$type);
 
 		return new $behavior($options);
 	}
@@ -194,12 +197,16 @@ abstract class Jelly_Core {
 	{
 		if ($model instanceof Jelly_Model)
 		{
-			return get_class($model);
+			// Get class name
+			$class_name = get_class($model);
 		}
 		else
 		{
-			return Jelly::get_class_name(Jelly::$_model_prefix.$model);
+			// Class name
+			$class_name = Jelly::get_class_name(Jelly::$_model_prefix.$model);
 		}
+
+		return $class_name;
 	}
 
 	/**
@@ -256,6 +263,13 @@ abstract class Jelly_Core {
 		return Jelly::$_behavior_prefix;
 	}
 
+	/**
+	 * Set PSR-0 class name
+	 *
+	 * @param $class_name
+	 *
+	 * @return string
+	 */
 	public static function get_class_name ($class_name)
 	{
 		$class_name = explode ('_', $class_name);

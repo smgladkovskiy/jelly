@@ -247,7 +247,7 @@ abstract class Jelly_Core_Field {
 			case Jelly_Field::HAS:
 				return $this instanceof Jelly_Field_Supports_Has;
 			case Jelly_Field::ADD_REMOVE:
-				return $this instanceof Jelly_Field_Supports_AddRemove;
+				return $this instanceof Jelly_Field_Supports_Addremove;
 			case Jelly_Field::JOIN:
 				return $this instanceof Jelly_Field_Supports_Join;
 		}
