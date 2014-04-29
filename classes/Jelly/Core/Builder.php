@@ -409,7 +409,14 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 */
 	public function unique_key($value)
 	{
-		return $this->_meta->primary_key();
+		if(is_object($this->_meta))
+		{
+			return $this->_meta->primary_key();
+		}
+		else
+		{
+			throw new Kohana_Exception(__('There is no meta information on model `:model`', array(':model' => $this->_model)));
+		}
 	}
 
 	/**
@@ -1053,23 +1060,32 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 */
 	protected function _expand_alias($model, $alias, $state)
 	{
-		switch ($alias)
+		$meta = Jelly::meta($model);
+
+		if(is_object($meta))
 		{
-			case ':primary_key':
-				$state['field'] = Jelly::meta($model)->primary_key();
-				break;
-			case ':name_key':
-				$state['field'] = Jelly::meta($model)->name_key();
-				break;
-			case ':foreign_key':
-				$state['field'] = Jelly::meta($model)->foreign_key();
-				break;
-			case ':unique_key':
-				$state['field'] = Jelly::query(Jelly::meta($model)->model())->unique_key($state['value']);
-				break;
-			default:
-				throw new Kohana_Exception('Unknown meta alias :alias', array(
+			switch ($alias)
+			{
+				case ':primary_key':
+					$state['field'] = Jelly::meta($model)->primary_key();
+					break;
+				case ':name_key':
+					$state['field'] = Jelly::meta($model)->name_key();
+					break;
+				case ':foreign_key':
+					$state['field'] = Jelly::meta($model)->foreign_key();
+					break;
+				case ':unique_key':
+					$state['field'] = Jelly::query(Jelly::meta($model)->model())->unique_key($state['value']);
+					break;
+				default:
+					throw new Kohana_Exception('Unknown meta alias :alias', array(
 					':alias' => $alias));
+			}
+		}
+		else
+		{
+			throw new Kohana_Exception(__('There is no meta information on model `:model`', array(':model' => $model)));
 		}
 
 		return $state;

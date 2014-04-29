@@ -53,6 +53,9 @@ abstract class Jelly_Core {
 	{
 		$class = Jelly::class_name($model);
 
+		if( ! class_exists($class))
+			throw new Kohana_Exception(__('Jelly Model `:model` does not exist', array(':model' => $model)));
+
 		return new $class($key);
 	}
 
