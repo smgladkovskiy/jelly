@@ -11,7 +11,7 @@
  * @copyright  (c) 2010-2011 Jonathan Geiger
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-abstract class Jelly_Core_Field_Manytomany extends Jelly_Field implements Jelly_Field_Supports_Addremove, Jelly_Field_Supports_Has {
+abstract class Jelly_Core_Field_ManyToMany extends Jelly_Field implements Jelly_Field_Supports_AddRemove, Jelly_Field_Supports_Has {
 
 	/**
 	 * @var  boolean  false, since this field does not map directly to a column

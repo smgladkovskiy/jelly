@@ -296,9 +296,10 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 
 		// Find the count
 		$result = (int) $query
-		               ->select(array('COUNT("*")', 'total'))
-		               ->execute($db)
-		               ->get('total');
+			->select(array('COUNT("*")', 'total'))
+			->execute($db)
+			->get('total')
+		;
 
 		// Trigger after_query callbacks
 		$meta AND $meta->events()->trigger('builder.after_select', $this);
@@ -339,13 +340,13 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 */
 	public function compile($db = NULL, $type = NULL)
 	{
-        if ( ! is_object($db))
-        {
-            // Get the database instance
-            $db = Database::instance($db);
-        }
+		if ( ! is_object($db))
+		{
+			// Get the database instance
+			$db = Database::instance($db);
+		}
 
-        $type === NULL AND $type = $this->_type;
+		$type === NULL AND $type = $this->_type;
 
 		// Select all of the columns for the model if we haven't already
 		$this->_meta AND empty($this->_select) AND $this->select_column('*');
@@ -513,7 +514,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 							}
 							elseif ($field->column instanceof Database_Expression)
 							{
-							    $add[] = array($field->column, $field->name);
+								$add[] = array($field->column, $field->name);
 							}
 						}
 
@@ -998,7 +999,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 		$column = $field;
 
 		// Alias the model
- 		list(, $alias, $model) = $this->_model_alias($model);
+		list(, $alias, $model) = $this->_model_alias($model);
 
 		// Expand meta-aliases
 		if (strpos($field, ':') !== FALSE)
@@ -1056,7 +1057,9 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 	 * @param   string  $model
 	 * @param   string  $alias
 	 * @param   array   $state
-	 * @return  array
+	 *
+	 * @return mixed
+	 * @throws Kohana_Exception
 	 */
 	protected function _expand_alias($model, $alias, $state)
 	{

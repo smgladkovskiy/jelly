@@ -121,13 +121,7 @@ abstract class Jelly_Core {
 	 */
 	public static function field($type, $options = NULL)
 	{
-		$field = Jelly::$_field_prefix.$type;
-
-        // Set PSR-0 class name
-        $field = strtolower($field);
-        $field = str_replace('_', ' ', $field);
-        $field = ucwords($field);
-        $field = str_replace(' ', '_', $field);
+		$field = Jelly::get_class_name(Jelly::$_field_prefix.$type);
 
 		return new $field($options);
 	}
@@ -141,13 +135,7 @@ abstract class Jelly_Core {
 	 */
 	public static function behavior($type, $options = array())
 	{
-		$behavior = Jelly::$_behavior_prefix.$type;
-
-        // Set PSR-0 class name
-        $behavior = strtolower($behavior);
-        $behavior = str_replace('_', ' ', $behavior);
-        $behavior = ucwords($behavior);
-        $behavior = str_replace(' ', '_', $behavior);
+		$behavior = Jelly::get_class_name(Jelly::$_behavior_prefix.$type);
 
 		return new $behavior($options);
 	}
@@ -210,21 +198,15 @@ abstract class Jelly_Core {
 		if ($model instanceof Jelly_Model)
 		{
 			// Get class name
-            $class_name = get_class($model);
+			$class_name = get_class($model);
 		}
 		else
 		{
-            // Class name
-            $class_name = Jelly::$_model_prefix.$model;
-
-            // Set PSR-0 class name
-            $class_name = strtolower($class_name);
-            $class_name = str_replace('_', ' ', $class_name);
-            $class_name = ucwords($class_name);
-            $class_name = str_replace(' ', '_', $class_name);
+			// Class name
+			$class_name = Jelly::get_class_name(Jelly::$_model_prefix.$model);
 		}
 
-        return $class_name;
+		return $class_name;
 	}
 
 	/**
@@ -281,4 +263,20 @@ abstract class Jelly_Core {
 		return Jelly::$_behavior_prefix;
 	}
 
+	/**
+	 * Set PSR-0 class name
+	 *
+	 * @param $class_name
+	 *
+	 * @return string
+	 */
+	public static function get_class_name ($class_name)
+	{
+		$class_name = explode ('_', $class_name);
+		foreach ($class_name as &$name) {
+			$name = UTF8::ucfirst ($name);
+		}
+
+		return implode ('_', $class_name);
+	}
 } // End Jelly_Core

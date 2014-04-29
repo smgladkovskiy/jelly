@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Handles has one relationships
+ * Handles has many relationships
  *
  * @package    Jelly
  * @category   Fields
@@ -8,10 +8,10 @@
  * @copyright  (c) 2010-2011 Jonathan Geiger
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Field_Supports_With, Jelly_Field_Supports_Save {
+abstract class Jelly_Core_Field_HasMany extends Jelly_Field implements Jelly_Field_Supports_AddRemove, Jelly_Field_Supports_Has {
 
 	/**
-	 * @var  boolean  Ffalse, since this field does not map directly to a column
+	 * @var  boolean  false, since this field does not map directly to a column
 	 */
 	public $in_db = FALSE;
 
@@ -23,7 +23,7 @@ abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Fiel
 	/**
 	 * @var  array  default is an empty array
 	 */
-	public $default = 0;
+	public $default = array();
 
 	/**
 	 * @var  array  the default to set on foreign fields when removing the relationship
@@ -31,20 +31,20 @@ abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Fiel
 	public $foreign_default = 0;
 
 	/**
-	 * @var  string  a string pointing to the foreign model and (optionally, a
-	 *               field, column, or meta-alias).
-	 */
-	public $foreign = '';
-
-	/**
 	 * @var  boolean  empty values are converted by default
 	 */
 	public $convert_empty = TRUE;
 
 	/**
-	 * @var  int  empty values are converted to 0, not NULL
+	 * @var  int  empty values are converted to array(), not NULL
 	 */
-	public $empty_value = 0;
+	public $empty_value = array();
+
+	/**
+	 * @var  string  a string pointing to the foreign model and (optionally, a
+	 *               field, column, or meta-alias).
+	 */
+	public $foreign = '';
 
 	/**
 	 * @var  boolean  dependent fields are automatically deleted if set to TRUE.
@@ -80,49 +80,41 @@ abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Fiel
 	}
 
 	/**
-	 * Sets a relationship on the field.
+	 * Converts a Database_Result, Jelly, array of ids, or an id to an array of ids.
 	 *
 	 * @param   mixed  $value
-	 * @return  mixed
+	 * @return  array
 	 */
 	public function set($value)
 	{
-		// Convert models to their id
-		if ($value instanceof Jelly_Model)
-		{
-			$value = $value->id();
-		}
-
 		list($value, $return) = $this->_default($value);
 
 		if ( ! $return)
 		{
-			$value = is_numeric($value) ? (int) $value : (string) $value;
+			$value = $this->_ids($value);
 		}
 
 		return $value;
 	}
 
 	/**
-	 * Returns the record that the model has.
+	 * Returns a Jelly_Builder that can then be selected, updated, or deleted.
 	 *
-	 * @param   Jelly_Model  $model
-	 * @param   mixed        $value
-	 * @return  mixed
+	 * @param   Jelly_Model    $model
+	 * @param   mixed          $value
+	 * @return  Jelly_Builder
 	 */
 	public function get($model, $value)
 	{
 		if ($model->changed($this->name))
 		{
 			return Jelly::query($this->foreign['model'])
-			            ->where($this->foreign['model'].'.'.':primary_key', '=', $value)
-			            ->limit(1);
+			            ->where($this->foreign['model'].'.'.':primary_key', 'IN', $value);
 		}
 		else
 		{
 			return Jelly::query($this->foreign['model'])
-			            ->where($this->foreign['model'].'.'.$this->foreign['field'], '=', $model->id())
-			            ->limit(1);
+			            ->where($this->foreign['model'].'.'.$this->foreign['field'], '=', $model->id());
 		}
 	}
 
@@ -146,18 +138,18 @@ abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Fiel
 		     ->update();
 
 		// Set the new relations
-		if ( ! empty($value))
+		if ( ! empty($value) AND is_array($value))
 		{
 			// Update the ones in our list
 			Jelly::query($this->foreign['model'])
-			     ->where($this->foreign['model'].'.'.':primary_key', '=', $value)
+			     ->where($this->foreign['model'].'.'.':primary_key', 'IN', $value)
 			     ->set(array($this->foreign['field'] => $model->id()))
 			     ->update();
 		}
 	}
 
 	/**
-	 * Deletes the dependent field if automatic relationship deletion
+	 * Deletes the dependent fields if automatic relationship deletion
 	 * is enabled.
 	 *
 	 * @param   Jelly_Model  $model
@@ -169,27 +161,34 @@ abstract class Jelly_Core_Field_Hasone extends Jelly_Field implements Jelly_Fiel
 		// Set the field name
 		$field = $this->name;
 
-		// Set dependent
-		$dependent = $model->$field;
+		// Set dependents
+		$dependents = $model->$field;
 
-		if ($this->delete_dependent AND $dependent->loaded())
+		if ($this->delete_dependent AND $dependents->count() > 0)
 		{
-			// Delete the field
-			$dependent->delete();
+			foreach ($dependents as $dependent)
+			{
+				// Delete the field
+				$dependent->delete();
+			}
 		}
 
 		return;
 	}
 
 	/**
-	 * Implementation of Jelly_Field_Supports_With.
+	 * Implementation of Jelly_Field_Supports_Has.
 	 *
-	 * @param   Jelly_Builder  $builder
-	 * @return  void
+	 * @param   Jelly_Model  $model
+	 * @param   mixed        $models
+	 * @return  boolean
 	 */
-	public function with($builder)
+	public function has($model, $models)
 	{
-		$builder->join(':'.$this->name, 'LEFT')->on($this->model.'.:primary_key', '=', ':'.$this->name.'.'.$this->foreign['field']);
+		return (bool) Jelly::query($this->foreign['model'])
+		                   ->where($this->foreign['model'].'.'.$this->foreign['field'], '=', $model->id())
+		                   ->where($this->foreign['model'].'.'.':primary_key', 'IN', $this->_ids($models))
+		                   ->count();
 	}
 
-} // End Jelly_Core_Field_Hasone
+} // End Jelly_Core_Field_HasMany

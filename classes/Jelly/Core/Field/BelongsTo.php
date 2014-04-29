@@ -8,7 +8,7 @@
  * @copyright  (c) 2010-2011 Jonathan Geiger
  * @license    http://www.opensource.org/licenses/isc-license.txt
  */
-abstract class Jelly_Core_Field_Belongsto extends Jelly_Field implements Jelly_Field_Supports_With {
+abstract class Jelly_Core_Field_BelongsTo extends Jelly_Field implements Jelly_Field_Supports_With {
 
 	/**
 	 * @var  boolean  defaults belongs_to's to in the database
@@ -122,4 +122,4 @@ abstract class Jelly_Core_Field_Belongsto extends Jelly_Field implements Jelly_F
 		$builder->join(':'.$this->name, 'LEFT')->on($this->model.'.'.$this->name, '=', ':'.$this->name.'.'.$this->foreign['field']);
 	}
 
-} // End Jelly_Core_Field_Belongsto
+} // End Jelly_Core_Field_BelongsTo
