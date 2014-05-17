@@ -745,6 +745,12 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 		// Get paths from relationship
 		$paths = explode(":", $relationship);
 
+		if( ! is_object($this->_meta))
+			throw new Kohana_Exception(
+				'Can\'t load `:model` model with `:relationship`',
+				array(':relationship' => $relationship, ':model' => $this->_model)
+			);
+
 		// Set parent model
 		$parent_model = $this->_meta->model();
 
@@ -761,6 +767,12 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 		{
 			// Load the field from the parent model
 			$field = Jelly::meta($parent_model)->field($path);
+
+			if( ! is_object($field))
+				throw new Kohana_Exception(
+					'Unknown field `:path` while trying to load it with main model `:model`',
+					array(':path' => $path, ':model' => $parent_model)
+				);
 
 			if ( ! $field->supports(Jelly_Field::WITH))
 			{
@@ -1082,8 +1094,7 @@ abstract class Jelly_Core_Builder extends Database_Query_Builder_Select {
 					$state['field'] = Jelly::query(Jelly::meta($model)->model())->unique_key($state['value']);
 					break;
 				default:
-					throw new Kohana_Exception('Unknown meta alias :alias', array(
-					':alias' => $alias));
+					throw new Kohana_Exception('Unknown meta alias :alias', array(':alias' => $alias));
 			}
 		}
 		else
