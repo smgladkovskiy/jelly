@@ -1,0 +1,11 @@
+{
+    "name": "smgladkovskiy/jelly",
+    "description": "A flexible ORM for Kohana 3.1+",
+    "authors": [
+        {
+            "name": "jonathangeiger",
+            "email": "me@gigr.ca"
+        }
+    ],
+    "require": {}
+}
