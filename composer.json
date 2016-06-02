@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "kohana/core": "~3.3.*",
-        "kohana/database": "~3.3.*"
+        "kohana/core": "^3.3",
+        "kohana/database": "^3.3"
     }
 }
